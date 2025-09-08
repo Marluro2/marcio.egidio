@@ -32,7 +32,7 @@
     }
     .header { display: flex; align-items: center; gap: 16px }
     .logo { width: 160px; height: 160px; object-fit: contain; border-radius: 16px; background:#0f0f11; border:1px dashed #27272a }
-    h1 { margin: 0; font-weight: 700; font-size: 40px; color: var(--gold) }
+    h1 { margin: 0; font-weight: 700; font-size: 28px; color: var(--gold) }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
       padding: 12px 18px; border-radius: 999px; border: 1px solid transparent;
@@ -83,7 +83,7 @@
         <div class="card">
           <div class="header">
             <img id="logo" class="logo" alt="Logo" src="" onerror="this.src=''; this.alt='[Logo]';" />
-            <h1>A teoria behaviorista de Skiner</h1>
+            <h1>A teoria behaviorista de SKiner</h1>
           </div>
 
           <div class="controls-row" style="margin-top:12px">
@@ -91,7 +91,6 @@
             <button class="btn" id="btn-inserir">🎉 Inserir</button>
             <label class="btn btn-ghost" for="logo-file">🖼️ Selecionar logo…</label>
             <input id="logo-file" type="file" accept="image/png,image/jpeg,image/webp" />
-            
           </div>
 
           <hr class="divider" />
@@ -139,8 +138,141 @@
   </div>
 
   <script>
-    // Aqui removi todo código que manipulava btn-quiz e btn-proximo
-    // Restante do JS permanece igual para inserir participantes, exportar, sorteio etc.
+    const EMOJIS_FESTA = ["🎉","🎊","✨","🏆","👏","💡","🚀","🌟"];
+    const MENSAGENS = [
+      "É um prazer contar com sua presença, {nome}.",
+      "Agradecemos sua presença, {nome}. Seja bem-vindo(a)!",
+      "Que bom ter você conosco, {nome}.",
+      "Sua participação faz a diferença, {nome}.",
+      "Você é muito bem-vindo(a) entre nós, {nome}.",
+    ];
+
+    let frasesDisponiveis = shuffle([...MENSAGENS]);
+    const participantes = [];
+    const excluidosSorteio = new Set();
+    let ultimoVencedor = "";
+
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr;
+    }
+    function agora(){
+      const d = new Date();
+      const pad = n => String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+    function baixarCSV(nomeArquivo, linhas){
+      const csv = linhas.map(l => l.map(v => `"${String(v).replaceAll('"','\"')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = nomeArquivo; a.click();
+      setTimeout(()=> URL.revokeObjectURL(url), 5000);
+    }
+
+    const elNome = document.getElementById('nome');
+    const btnInserir = document.getElementById('btn-inserir');
+    const btnExport = document.getElementById('btn-export');
+    const btnSorteio = document.getElementById('btn-sorteio');
+    const btnResetSorteio = document.getElementById('btn-reset-sorteio');
+    const nomeView = document.getElementById('nomeView');
+    const msgBox = document.getElementById('msgBox');
+    const mensagem = document.getElementById('mensagem');
+    const lista = document.getElementById('lista');
+    const banner = document.getElementById('banner');
+    const closeBanner = document.getElementById('close-banner');
+    const logoFile = document.getElementById('logo-file');
+    const logoImg = document.getElementById('logo');
+
+    const overlayWin = document.getElementById('overlay-win');
+    const winnerName = document.getElementById('winnerName');
+    const cbRemover = document.getElementById('cb-remover');
+    const btnSorteieNovamente = document.getElementById('btn-sorteie-novamente');
+    const btnOk = document.getElementById('btn-ok');
+
+    function mostrarBanner(){ banner.classList.add('show'); }
+    function fecharBanner(){ banner.classList.remove('show'); }
+
+    function inserirParticipante(){
+      const nome = (elNome.value || '').trim();
+      if(!nome){ alert('Por favor, digite um nome.'); return }
+
+      if(frasesDisponiveis.length === 0) frasesDisponiveis = shuffle([...MENSAGENS]);
+      const frase = frasesDisponiveis.pop().replace('{nome}', nome);
+      const emoji = EMOJIS_FESTA[Math.floor(Math.random() * EMOJIS_FESTA.length)];
+
+      nomeView.textContent = nome;
+      msgBox.classList.add('hide');
+      setTimeout(()=>{
+        mensagem.textContent = `${emoji} ${frase}`;
+        msgBox.classList.remove('hide');
+      }, 200);
+
+      elNome.value = '';
+
+      const ts = agora();
+      participantes.push({ nome, timestamp: ts });
+      const p = document.createElement('p');
+      p.textContent = `• ${nome} — ${ts}`;
+      lista.appendChild(p);
+    }
+
+    function exportarCSV(){
+      const linhas = [["Nome","Data/Hora"], ...participantes.map(p => [p.nome, p.timestamp])];
+      baixarCSV('participantes_seminario.csv', linhas);
+    }
+
+    function nomesUnicos(){
+      const set = new Set(); const arr = [];
+      for(const p of participantes){ const n = p.nome.trim(); if(n && !set.has(n)){ set.add(n); arr.push(n) } }
+      return arr;
+    }
+
+    function abrirOverlay(el){ el.classList.add('show') }
+    function fecharOverlay(el){ el.classList.remove('show') }
+
+    function sortear(){
+      const pool = nomesUnicos().filter(n => !excluidosSorteio.has(n));
+      if(pool.length === 0){ alert('Sem participantes elegíveis para sorteio.'); return }
+      const vencedor = pool[Math.floor(Math.random() * pool.length)];
+      ultimoVencedor = vencedor;
+      cbRemover.checked = false;
+      winnerName.textContent = vencedor;
+      abrirOverlay(overlayWin);
+    }
+
+    function confirmarWinner(){
+      if(cbRemover.checked && ultimoVencedor){ excluidosSorteio.add(ultimoVencedor) }
+      fecharOverlay(overlayWin);
+    }
+
+    function sortearDeNovo(){
+      confirmarWinner();
+      sortear();
+    }
+
+    function resetarSorteio(){
+      excluidosSorteio.clear();
+      alert('Sorteio reiniciado: todos os participantes voltam a concorrer.');
+    }
+
+    btnInserir.addEventListener('click', inserirParticipante);
+    elNome.addEventListener('keydown', e => { if(e.key === 'Enter') inserirParticipante() });
+    btnExport.addEventListener('click', exportarCSV);
+    btnSorteio.addEventListener('click', sortear);
+    btnResetSorteio.addEventListener('click', resetarSorteio);
+
+    btnSorteieNovamente.addEventListener('click', sortearDeNovo);
+    btnOk.addEventListener('click', confirmarWinner);
+
+    closeBanner.addEventListener('click', fecharBanner);
+    setTimeout(mostrarBanner, 400);
+
+    logoFile.addEventListener('change', (e)=>{
+      const f = e.target.files?.[0];
+      if(!f) return;
+      const url = URL.createObjectURL(f);
+      logoImg.src = url;
+    });
   </script>
 </body>
 </html>
