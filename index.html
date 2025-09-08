@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SKINER — Launcher (mobile-friendly)</title>
+  <title>Launcher SKINER</title>
   <meta name="theme-color" content="#0b0b0c" />
   <style>
     :root{
@@ -11,53 +11,40 @@
       --gold:#ffca28;--accent:#1f2937;--line:#202025;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);
-         font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-
-    /* Layout */
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,sans-serif}
     .layout{display:grid;grid-template-columns:1fr;min-height:100vh}
     .sidebar{
-      position:fixed;inset:0 auto 0 0;width:280px;background:#0f0f12;
+      position:fixed;inset:0 auto 0 0;width:260px;background:#0f0f12;
       border-right:1px solid var(--line);
       transform:translateX(-100%);transition:transform .25s ease;z-index:50;
-      padding:20px;display:flex;flex-direction:column;gap:16px
+      padding:20px;display:flex;flex-direction:column;gap:14px
     }
     .sidebar.open{transform:translateX(0)}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand .logo{width:36px;height:36px;border-radius:10px;background:#151518;border:1px solid #26262c}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand .logo{width:32px;height:32px;border-radius:8px;background:#151518;border:1px solid #26262c}
     .brand .t{font-weight:800;color:var(--gold)}
     .nav{display:flex;flex-direction:column;gap:8px}
     .btn{
-      display:flex;align-items:center;gap:10px;justify-content:flex-start;
-      padding:14px;border-radius:12px;border:1px solid transparent;
-      background:var(--accent);color:var(--gold);font-weight:800;cursor:pointer;
-      min-height:48px;font-size:clamp(14px, 2.5vw, 16px)
+      display:flex;align-items:center;gap:8px;justify-content:flex-start;
+      padding:12px;border-radius:10px;border:1px solid transparent;
+      background:var(--accent);color:var(--gold);font-weight:700;cursor:pointer;
+      font-size:15px
     }
-    .btn:hover{transform:translateY(-1px);background:#243244}
-    .btn-outline{background:transparent;border-color:var(--gold)}
-    .content{padding:64px 16px 16px}
-    .card{background:var(--card);border:1px solid #1f1f23;border-radius:18px;box-shadow:0 8px 30px rgba(0,0,0,.35);padding:20px}
-    .title{font-size:clamp(20px, 3.6vw, 26px);font-weight:800;color:var(--gold);margin:0 0 10px}
-    .muted{color:var(--muted);font-size:clamp(13px,2.6vw,16px)}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .pill{padding:6px 10px;border-radius:999px;border:1px solid #2a2a2e;color:#ddd;font-size:12px}
-    iframe{width:100%;height:calc(100vh - 120px);border:none;border-radius:12px;background:#0c0c0f}
-
-    /* Toggle button (mobile) */
+    .btn:hover{background:#243244}
+    .content{padding:64px 14px 14px}
+    .card{background:var(--card);border:1px solid #1f1f23;border-radius:14px;padding:18px}
+    .title{font-size:22px;font-weight:800;color:var(--gold);margin:0 0 6px}
+    iframe{width:100%;height:calc(100vh - 120px);border:none;border-radius:10px;background:#0c0c0f}
     .menu-toggle{
       position:fixed;top:12px;left:12px;z-index:60;
       background:#1f2937;border:1px solid #2a2a2e;color:var(--gold);
-      padding:10px 12px;border-radius:10px;font-weight:800
+      padding:8px 12px;border-radius:8px;font-weight:800
     }
-
-    /* Desktop breakpoint */
     @media (min-width: 900px){
-      .layout{grid-template-columns:280px 1fr}
+      .layout{grid-template-columns:260px 1fr}
       .sidebar{position:static;transform:none}
       .menu-toggle{display:none}
       .content{padding:24px}
-      iframe{height:calc(100vh - 160px)}
     }
   </style>
 </head>
@@ -70,76 +57,55 @@
         <div class="t">SKINER — Launcher</div>
       </div>
       <div class="nav">
-        <button class="btn" data-file="SKINER1.html">🏠 Seminário — Boas‑vindas</button>
-        <button class="btn" data-file="discri.html">🧪 Quiz — Estímulo Discriminativo</button>
-        <button class="btn" data-file="Fading.html">🟡 Fading — Reconhecer o Nome</button>
+        <button class="btn" data-file="SKINER1.html">🏠 Seminário — Boas-vindas</button>
+        <button class="btn" data-file="discri.html">🧪 Discriminação</button>
+        <button class="btn" data-file="Fading.html">🟡 Fading</button>
         <button class="btn" data-file="Instrucao.html">📘 Instrução Programada</button>
-        <button class="btn" data-file="keller.html">📚 Keller (PSI) — DEMO</button>
+        <button class="btn" data-file="keller.html">📚 Keller (PSI)</button>
+        <button class="btn" data-file="quiz_skinner_v2.html">🎓 Quiz Skinner (10 questões)</button>
       </div>
     </aside>
     <main class="content">
       <div class="card">
         <h1 class="title" id="title">Início</h1>
-        <p class="muted" id="desc">
-          Coloque este arquivo <strong>index.html</strong> na <em>mesma pasta</em> que:
-          <code>SKINER1.html</code>, <code>discri.html</code>, <code>Fading.html</code>, <code>Instrucao.html</code>, <code>keller.html</code>.
-          Use o menu para carregar cada módulo.
+        <p id="desc">
+          Escolha um módulo no menu. No celular, toque em <b>☰ Menu</b>.
         </p>
-        <div class="row">
-          <button class="btn btn-outline" id="openNew">↗ Abrir em nova aba</button>
-          <span class="pill">Responsivo (mobile/desktop)</span>
-          <span class="pill">Sem dependências</span>
-        </div>
       </div>
-      <div style="margin-top:14px">
+      <div style="margin-top:12px">
         <iframe id="frame" title="Módulo"
-          srcdoc="<style>body{margin:0;display:grid;place-items:center;height:50vh;color:#ffca28;font:800 20px system-ui;text-align:center;padding:0 16px}</style><div>Escolha um módulo no menu. No celular, toque em <b>☰ Menu</b>.</div>">
+          srcdoc="<style>body{margin:0;display:grid;place-items:center;height:50vh;color:#ffca28;font:700 18px system-ui;text-align:center;padding:0 16px}</style><div>Selecione um módulo no menu lateral.</div>">
         </iframe>
       </div>
     </main>
   </div>
-
   <script>
     const frame = document.getElementById('frame');
     const titleEl = document.getElementById('title');
     const descEl = document.getElementById('desc');
-    const openNew = document.getElementById('openNew');
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
 
     const LABELS = {
-      'SKINER1.html': 'Seminário — Boas‑vindas',
-      'discri.html': 'Quiz — Estímulo Discriminativo',
-      'Fading.html': 'Fading — Reconhecer o Nome',
+      'SKINER1.html': 'Seminário — Boas-vindas',
+      'discri.html': 'Discriminação',
+      'Fading.html': 'Fading',
       'Instrucao.html': 'Instrução Programada',
-      'keller.html': 'Keller (PSI) — DEMO'
+      'keller.html': 'Keller (PSI)',
+      'quiz_skinner_v2.html': 'Quiz Skinner (10 questões)'
     };
 
-    let current = null;
-
     function loadLocal(file){
-      current = file;
       titleEl.textContent = LABELS[file] || file;
-      descEl.textContent = 'Carregado do arquivo local: ' + file;
+      descEl.textContent = 'Carregado: ' + file;
       frame.removeAttribute('srcdoc');
       frame.src = file;
-      // Fecha o menu no mobile após escolher
       sidebar.classList.remove('open');
     }
-
-    // Eventos do menu
     document.querySelectorAll('.nav .btn').forEach(btn=>{
       btn.addEventListener('click', ()=> loadLocal(btn.dataset.file));
     });
-
-    // Toggle do menu (mobile)
     menuToggle.addEventListener('click', ()=> sidebar.classList.toggle('open'));
-
-    // Abrir módulo atual em nova aba
-    openNew.addEventListener('click', ()=>{
-      if(!current){ alert('Escolha um módulo primeiro.'); return; }
-      window.open(current, '_blank');
-    });
   </script>
 </body>
 </html>
